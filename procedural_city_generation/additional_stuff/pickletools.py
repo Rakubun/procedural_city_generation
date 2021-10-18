@@ -13,7 +13,8 @@ def save_vertexlist(vertex_list, name="output", savefig=0):
             else:
                 pickle.dump(vertex_list, f)
     except IOError as error:
-        print "Specified output file doesn't exist: {0}".format(error)
+        # print "Specified output file doesn't exist: {0}".format(error)
+        print ("Specified output file doesn't exist: ".format(error))
         return 1
     except RuntimeError:
         print("Recursionlimit was not enough - Pickle trying again with sys.recusionlimit at 50000")
@@ -51,6 +52,8 @@ def reconstruct(path):
         import os
         import procedural_city_generation
         fullpath = os.path.dirname(procedural_city_generation.__file__) + "/temp/" + path
+
+        print("full path === " + fullpath)
 
         import pickle
         with open(fullpath, 'rb') as f:

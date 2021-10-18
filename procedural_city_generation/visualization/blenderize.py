@@ -31,12 +31,38 @@ def createtexture(name, scale, texturetype='REPEAT'):
     imagenode.image=bpy.data.images.load(path+"/visualization/Textures/"+name)
     imagenode.projection='BOX'
 #    imagenode.vector_type='Vector'
-    diffusenode=mat.node_tree.nodes["Diffuse BSDF"]
+    # add by zhanglewen
+    diffusenode=mat.node_tree.nodes["Principled BSDF"]
     mat.node_tree.links.new(imagenode.outputs['Color'], diffusenode.inputs[0])
+
+#     image_texture = mat.node_tree.nodes.get('Image Texture')
+#     # roughness = mat.node_tree.nodes.get('Image Texture.001')
+#     # normal_map = mat.node_tree.nodes.get('Normal')
+# #            displacement = mat.node_tree.nodes.get('Displacement')
+#     material_output = mat.node_tree.nodes.get('Material Output')
+#     diffuse = mat.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
+    
+#     uv_map_node = mat.node_tree.nodes.new('ShaderNodeUVMap')
+#     uv_map_node.uv_map = "UVMap"
+#     # normal_map.uv_map = "UVMap"
+
+
+#     # remap links and connect the diffuse shader to material
+#     mat.node_tree.links.new(uv_map_node.outputs['UV'], image_texture.inputs['Vector'])
+#     mat.node_tree.links.new(diffuse.inputs['Color'], image_texture.outputs['Color'])
+#     # mat.node_tree.links.new(diffuse.inputs['Roughness'], roughness.outputs['Color'])
+#     # mat.node_tree.links.new(diffuse.inputs['Normal'], normal_map.outputs['Normal'])
+#     mat.node_tree.links.new(material_output.inputs[0], diffuse.outputs[0])
+    
+#     # Remove default
+#     mat.node_tree.nodes.remove(mat.node_tree.nodes.get('Principled BSDF')) #title of the existing node when materials.new
+#     zhanglewen add end
+    
 
     mappingnode=mat.node_tree.nodes.new("ShaderNodeMapping")
     mappingnode.vector_type='VECTOR'
-    mappingnode.scale=(scale, scale, scale)
+    # add by zhanglewen
+    # mappingnode.scale=(scale, scale, scale)
     mat.node_tree.links.new(mappingnode.outputs[0], imagenode.inputs[0])
 
 
@@ -109,7 +135,8 @@ def createobject(verts, faces, texname, texscale, shrinkwrap):
         wrap.target=bpy.context.scene.objects['Floormesh']
         wrap.offset=conf_values[u'offset'][u'value']
 
-    bpy.context.scene.objects.link(ob)
+    # bpy.context.scene.objects.link(ob)
+    bpy.context.collection.objects.link(ob)
 
 def setupscenery():
     """
@@ -128,10 +155,14 @@ def setupscenery():
         bpy.ops.object.camera_add(view_align=True, location=(1.91961, -3.53902, 1.84546), rotation=(1.141, 1.56617e-08, 0.497))
 
     try:
-        bpy.data.lamps["Lamp"].type="SUN"
+        bpy.data.lights["Lamp"].type="SUN"
     except:
-        bpy.ops.object.lamp_add(type='SUN', location=(4.076245, 4.076245, 4.076245))
+        bpy.ops.object.light_add(type='SUN', location=(4.076245, 4.076245, 4.076245))
+        # light_object = bpy.data.lights.new(name="Lamp", type='SUN')
+        # light_object.location = (4.076245, 4.076245, 4.076245)
         bpy.context.scene.objects['Sun'].name = 'Lamp'
+
+
 
 def main(points, triangles, polygons):
     """
@@ -155,7 +186,8 @@ def main(points, triangles, polygons):
     #TODO: Not flexible code.
     me.materials.append(createtexture("Floor02.jpg", 100, True))
 
-    bpy.context.scene.objects.link(ob)
+    # bpy.context.scene.objects.link(ob)
+    bpy.context.collection.objects.link(ob)
 
 
 
